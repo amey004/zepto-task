@@ -23,18 +23,12 @@ const ChipComponent = () => {
   ];
 
   
+
   useEffect(() => {
     setFilteredItems(items);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const chipsContains =(item) => {
-    let label = false;
-    chips.forEach((i)=>{
-      if(i.name===item.name)
-        label=true;
-    })
-    return label;
-  }
   const handleInputChange = (event) => {
     const value = event.target.value;
     setInputValue(value);
@@ -44,27 +38,24 @@ const ChipComponent = () => {
         ? items.filter((item) => !chips.includes(item))
         : items.filter(
             (item) =>
-              !chipsContains(item) ||
+              !chips.includes(item) &&
               item.name.toLowerCase().includes(value.toLowerCase())
           );
 
     setFilteredItems(filtered);
-    setShowDropdown(true); 
   };
 
   const handleItemClick = (item) => {
     setChips([...chips, item]);
-    setInputValue("");
-    setFilteredItems((prevFilteredItems) =>
-      prevFilteredItems.filter((filteredItem) => filteredItem !== item)
+    setFilteredItems(
+      filteredItems.filter((filteredItem) => filteredItem !== item)
     );
-
-    setShowDropdown(false);
+    setShowDropdown(true);
   };
 
   const handleChipRemove = (removedChipIndex) => {
     const removedChip = chips[removedChipIndex];
-    setChips(chips.filter(( index) => index !== removedChipIndex));
+    setChips(chips.filter((chip, index) => index !== removedChipIndex));
     setFilteredItems([...filteredItems, removedChip]);
   };
 
@@ -85,7 +76,6 @@ const ChipComponent = () => {
 
   const handleDropdownBlur = () => {
     setTimeout(() => {
-      setShowDropdown(false);
       setHighlightedChipIndex(null); 
     }, 100);
   };
@@ -107,7 +97,7 @@ const ChipComponent = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [inputRef, setShowDropdown]);
-
+  
   return (
     <div className="auto-complete-input">
       <h2>Add Users</h2>
