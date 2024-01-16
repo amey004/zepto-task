@@ -22,33 +22,37 @@ const ChipComponent = () => {
     { name: "Jack", avatar: "avatar10.png" },
   ];
 
-  
-
   useEffect(() => {
     setFilteredItems(items);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const chipContains = (item) => {
+    let label = false;
+    chips.forEach((i) => {
+      if (i.name === item.name) {
+        label = true;
+      }
+    });
+    return label;
+  };
+
   const handleInputChange = (event) => {
     const value = event.target.value;
     setInputValue(value);
-
-    const filtered =
-      value === ""
-        ? items.filter((item) => !chips.includes(item))
-        : items.filter(
-            (item) =>
-              !chips.includes(item) &&
-              item.name.toLowerCase().includes(value.toLowerCase())
-          );
-
+    let filtered;
+    if(value===""){
+      filtered = items.filter((item)=>{return !chipContains(item)})
+    }else{
+      filtered = items.filter((item)=>{return !chipContains(item) && item.name.toLocaleLowerCase().includes(value.toLocaleLowerCase())})
+    }
     setFilteredItems(filtered);
   };
 
   const handleItemClick = (item) => {
     setChips([...chips, item]);
-    setFilteredItems(
-      filteredItems.filter((filteredItem) => filteredItem !== item)
+    setFilteredItems((prevItems) =>
+      prevItems.filter((filteredItem) => filteredItem !== item)
     );
     setShowDropdown(true);
   };
@@ -76,7 +80,7 @@ const ChipComponent = () => {
 
   const handleDropdownBlur = () => {
     setTimeout(() => {
-      setHighlightedChipIndex(null); 
+      setHighlightedChipIndex(null);
     }, 100);
   };
 
@@ -97,10 +101,10 @@ const ChipComponent = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [inputRef, setShowDropdown]);
-  
+
   return (
     <div className="auto-complete-input">
-      <h2>Add Users</h2>
+      <h2>Pick Users</h2>
       <div className="input-container" ref={inputRef}>
         <div className="chips-container">
           {chips.map((chip, index) => (
